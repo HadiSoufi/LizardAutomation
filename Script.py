@@ -71,7 +71,7 @@ async def main():
                 await plant.turn_on()
 
                 diff = now - sunrise
-                brightness = diff / timedelta(hours=change_hours)
+                brightness = int (diff / timedelta(hours=change_hours))
                 await dimmer.set_brightness(brightness)
 
             # Slowly dim the bulbs at sunset
@@ -81,7 +81,7 @@ async def main():
                 await plant.turn_on()
 
                 diff = sunset - now
-                brightness = diff / timedelta(hours=change_hours)
+                brightness = int (diff / timedelta(hours=change_hours))
                 await dimmer.set_brightness(brightness)
         
         # Exception handling. Most commonly caused by hardware or network issue.
