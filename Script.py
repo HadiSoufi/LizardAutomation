@@ -92,5 +92,6 @@ async def main():
         finally:
             await asyncio.sleep(ping_delay)
 
-# This is running in a jupyter notebook. For standalone, a different technique must be used
-await main()
+# if in Jupyter, await(main) will be fine
+if __name__ == "__main__":
+    asyncio.run(main())
