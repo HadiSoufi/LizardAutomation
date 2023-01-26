@@ -18,7 +18,7 @@ class DayState(Enum):
     sunset = 4
 
 # CONFIG
-sun_data = Sun(35.227085, -80.843124)   # Use your latitude/longitude here. Very different timezones will cause errors
+sun_data = Sun(35.227085, -80.843124)   # Use your latitude/longitude here
 change_hours = 2                        # Number of hours for sunrise/sunset
 ping_delay = 1                          # Amount of time to wait between running each loop. Higher values lead to increased smoothness during sunrise/sunset
 strip = SmartStrip("192.168.1.160")     # Reference to actual strip
