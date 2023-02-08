@@ -19,7 +19,7 @@ strip = SmartStrip("192.168.1.160")     # Strip object
 dimmer = SmartDimmer("192.168.1.161")   # Dimmer object
 
 fade_time = timedelta(hours = change_hours)     # Convert change_hours to a datetime object
-sun_data = Sun(latitude, longitude)             # Convert change_hours to a datetime object
+sun_data = Sun(latitude, longitude)             # Get sunrise/sunset data from provided latitude/longitude
 
 # Turn on all switches
 async def turn_on():
