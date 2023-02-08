@@ -29,7 +29,7 @@ async def turn_on():
     await plant.turn_on()
 
 # Set brightness on dimmer switches, turn others on
-async def set_brightness(brightness)
+async def set_brightness(brightness):
     await dimmer.turn_on()
     await dimmer.set_brightness(brightness)
     await uvb.turn_on()
