@@ -23,21 +23,25 @@ sun_data = Sun(latitude, longitude)             # Get sunrise/sunset data from p
 
 # Turn on all switches
 async def turn_on():
-    await dimmer.turn_on()
-    await dimmer.set_brightness(100)
-    await strip.children[1].turn_on()
-    await strip.children[2].turn_on()
-
-# Set brightness on dimmer switches, turn others on
-async def set_brightness(brightness):
-    await dimmer.turn_on()
-    await dimmer.set_brightness(brightness)
+    await strip.children[0].turn_on()
     await strip.children[1].turn_on()
     await strip.children[2].turn_on()
     
+    await dimmer.turn_on()
+    await dimmer.set_brightness(100)
+
+# Set brightness on dimmer switches, turn others on
+async def set_brightness(brightness):
+    await strip.children[0].turn_on()
+    await strip.children[1].turn_on()
+    await strip.children[2].turn_on()
+    
+    await dimmer.turn_on()
+    await dimmer.set_brightness(brightness)
+    
 # Turn off all switches    
 async def turn_off():
-    await dimmer.turn_off()
+    await strip.children[0].turn_off()
     await strip.children[1].turn_off()
     await strip.children[2].turn_off()
 
