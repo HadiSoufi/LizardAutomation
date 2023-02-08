@@ -51,7 +51,7 @@ async def main():
     while True:
         try:
             # Must be called before any other API calls
-            update()
+            await update()
 
             # Get time of day, sunrise, and sunset in local timezone
             sunrise = sun_data.get_sunrise_time().astimezone()
@@ -62,16 +62,16 @@ async def main():
             if now > sunrise and now < sunset:
                 # Sunrise
                 if now < sunrise + fade_time:
-                    set_brightness(int ((sunset - now) / fade_time))
+                    await set_brightness(int ((sunset - now) / fade_time))
                 # Sunset
                 elif now > sunset - fade_time:
-                    set_brightness(int ((sunset - now) / fade_time))
+                    await set_brightness(int ((sunset - now) / fade_time))
                 # Day
                 else:
-                    turn_on()
+                    await turn_on()
             # Night
             else:
-                turn_off()
+                await turn_off()
         
         # Exception handling. Most commonly caused by hardware or network issue.
         except asyncio.CancelledError as err:
