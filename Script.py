@@ -25,21 +25,21 @@ sun_data = Sun(latitude, longitude)             # Convert change_hours to a date
 async def turn_on():
     await dimmer.turn_on()
     await dimmer.set_brightness(100)
-    await uvb.turn_on()
-    await plant.turn_on()
+    await strip.children[1].turn_on()
+    await strip.children[2].turn_on()
 
 # Set brightness on dimmer switches, turn others on
 async def set_brightness(brightness):
     await dimmer.turn_on()
     await dimmer.set_brightness(brightness)
-    await uvb.turn_on()
-    await plant.turn_on()
+    await strip.children[1].turn_on()
+    await strip.children[2].turn_on()
     
 # Turn off all switches    
 async def turn_off():
     await dimmer.turn_off()
-    await uvb.turn_off()
-    await plant.turn_off()
+    await strip.children[1].turn_off()
+    await strip.children[2].turn_off()
 
 # Update all smart devices
 async def update():
@@ -52,11 +52,6 @@ async def main():
         try:
             # Must be called before any other API calls
             update()
-            
-            # Gather individual plugs
-            heat = strip.children[0]
-            uvb = strip.children[1]
-            plant = strip.children[2]
 
             # Get time of day, sunrise, and sunset in local timezone
             sunrise = sun_data.get_sunrise_time().astimezone()
