@@ -81,6 +81,7 @@ async def main():
         except asyncio.CancelledError as err:
             print(err)     
         except kasa.exceptions.SmartDeviceException as err:
+            await strip.children[0].turn_on()
             print(err)   
         finally:
             await asyncio.sleep(ping_delay)
