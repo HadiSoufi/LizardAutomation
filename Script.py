@@ -44,25 +44,46 @@ async def turn_off():
     await strip.children[0].turn_off()
     await strip.children[1].turn_off()
     await strip.children[2].turn_off()
-
-# Update all smart devices
-async def update():
-    await strip.update()
-    await dimmer.update()
     
 # Main event loop
 async def main():
     while True:
+        # Delay between iterations
+        await asyncio.sleep(ping_delay)
+        
+        # Get time of day, sunrise, and sunset in local timezone
+        sunrise = sun_data.get_sunrise_time().astimezone()
+        sunset = sun_data.get_sunset_time().astimezone()
+        now = datetime.now().astimezone()
+        
+        # Validate power strip
         try:
-            # Must be called before any other API calls
-            await update()
-
-            # Get time of day, sunrise, and sunset in local timezone
-            sunrise = sun_data.get_sunrise_time().astimezone()
-            sunset = sun_data.get_sunset_time().astimezone()
-            now = datetime.now().astimezone()
-
-            # Calculate the state of day
+            await strip.update()
+        except asyncio.CancelledError as err:
+            print("Operation cancelled.")    
+            continue
+        except kasa.exceptions.SmartDeviceException as err:
+            print("Error connecting to Smart Strip: " + err)
+            print("Make sure the device is connected to the network, or check the IP.")
+            continue
+        
+        # Validate dimmer
+        try:
+            await dimmer.update()
+        except asyncio.CancelledError as err:
+            print("Operation cancelled.")
+            continue
+        except kasa.exceptions.SmartDeviceException as err:
+            if strip.children[0].is_on:
+                print("Error connecting to Smart Dimmer: " + err)
+                print("Make sure the device is connected to the network, or check the IP.")
+            else:
+                print("Error connecting to Smart Dimmer. Attempting to resolve automatically.")
+                await strip.children[0].turn_on()
+            continue
+            
+        # Update lights
+        try:
             if now > sunrise and now < sunset:
                 # Sunrise
                 if now < sunrise + fade_time:
@@ -76,16 +97,11 @@ async def main():
             # Night
             else:
                 await turn_off()
-        
-        # Exception handling. Most commonly caused by hardware or network issue.
         except asyncio.CancelledError as err:
-            print(err)     
+            print("Operation cancelled.")     
         except kasa.exceptions.SmartDeviceException as err:
-            await strip.children[0].turn_on()
-            print(err)   
-        finally:
-            await asyncio.sleep(ping_delay)
-            
+            print(err)
+
 # if in Jupyter, "await main" will be fine
 if __name__ == "__main__":
     asyncio.run(main())
