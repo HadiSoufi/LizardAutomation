@@ -94,6 +94,6 @@ async def main():
         finally:
             await asyncio.sleep(ping_delay)
 
-# if in Jupyter, await(main) will be fine
+# if in Jupyter, "await main" will be fine
 if __name__ == "__main__":
     asyncio.run(main())
