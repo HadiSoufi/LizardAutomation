@@ -51,7 +51,7 @@ async def main():
     while True:
         try:
             # Must be called before any other API calls
-            asyncio.run(update())
+            update()
             
             # Gather individual plugs
             heat = strip.children[0]
@@ -67,16 +67,16 @@ async def main():
             if now > sunrise and now < sunset:
                 # Sunrise
                 if now < sunrise + fade_time:
-                    asyncio.run(set_brightness(int ((sunset - now) / fade_time)))
+                    set_brightness(int ((sunset - now) / fade_time))
                 # Sunset
                 elif now > sunset - fade_time:
-                    asyncio.run(set_brightness(int ((sunset - now) / fade_time)))
+                    set_brightness(int ((sunset - now) / fade_time))
                 # Day
                 else:
-                    asyncio.run(turn_on())
+                    turn_on()
             # Night
             else:
-                asyncio.run(turn_off())
+                turn_off()
         
         # Exception handling. Most commonly caused by hardware or network issue.
         except asyncio.CancelledError as err:
