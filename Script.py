@@ -12,7 +12,7 @@ from datetime import timedelta
 
 # CONFIG
 latitude = 35.227085                    # Timezone latitude
-longitude = -80.843124                 # Timezone longitude
+longitude = -80.843124                  # Timezone longitude
 change_hours = 2                        # Number of hours for sunrise/sunset
 ping_delay = 1                          # Amount of time in seconds to wait between running each loop. Higher values lead to increased smoothness during sunrise/sunset
 strip = SmartStrip("192.168.1.160")     # Strip object
