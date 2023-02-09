@@ -41,7 +41,7 @@ async def set_brightness(brightness):
     
 # Turn off all switches    
 async def turn_off():
-    await strip.children[0].turn_off()
+    # await strip.children[0].turn_off()
     await strip.children[1].turn_off()
     await strip.children[2].turn_off()
     
@@ -98,9 +98,11 @@ async def main():
             else:
                 await turn_off()
         except asyncio.CancelledError as err:
-            print("Operation cancelled.")     
+            print("Operation cancelled.")
+            continue
         except kasa.exceptions.SmartDeviceException as err:
             print(err)
+            continue
 
 # if in Jupyter, "await main" will be fine
 if __name__ == "__main__":
