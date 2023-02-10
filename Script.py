@@ -44,6 +44,7 @@ async def turn_off():
     # await strip.children[0].turn_off()
     await strip.children[1].turn_off()
     await strip.children[2].turn_off()
+    await dimmer.turn_off()
     
 # Main event loop
 async def main():
