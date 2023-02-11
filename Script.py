@@ -18,7 +18,7 @@ ping_delay = 1                                  # Amount of time in seconds to w
 strip = SmartStrip("192.168.1.160")             # Smart strip
 dimmers = [[SmartDimmer("192.168.1.161"), 1],   # Dimmers to sync to day/night. 
            [SmartDimmer("192.168.1.164"), 3]]    # First number is dimmer ip, second is position on strip.
-heat = SmartDimmer("192.168.1.165")             # Heat dimmer is kept separate for temperature control.
+heat = SmartDimmer("192.168.1.163")             # Heat dimmer is kept separate for temperature control.
 
 fade_time = timedelta(hours = change_hours)     # Convert change_hours to a datetime object
 sun_data = Sun(latitude, longitude)             # Get sunrise/sunset data from provided latitude/longitude
