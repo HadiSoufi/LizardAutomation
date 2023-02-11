@@ -26,12 +26,14 @@ sun_data = Sun(latitude, longitude)             # Get sunrise/sunset data from p
 # Turn on all switches
 async def turn_on():
     for dimmer in dimmers:
+       await dimmer[0].update()
        await dimmer[0].turn_on()
        await dimmer[0].set_brightness(100)
 
 # Set brightness on all switches
 async def set_brightness(brightness):
     for dimmer in dimmers:
+       await dimmer[0].update()
        await dimmer[0].turn_on()
        await dimmer[0].set_brightness(brightness)
     
@@ -43,11 +45,11 @@ async def turn_off():
 
 # Validate dimmers
 async def update_dimmers():
-    for dimmer_data in dimmers:
-        i = dimmer_data[1] - 1
+    for dimmer in dimmers:
+        i = dimmer[1] - 1
         
         try:
-            await dimmer_data[0].update()
+            await dimmer[0].update()
         except asyncio.CancelledError as err:
             print("Operation cancelled.")
             return False
