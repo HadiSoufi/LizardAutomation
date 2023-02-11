@@ -103,9 +103,9 @@ async def main():
             continue
         
         # Validate dimmers
-        if not update_dimmers():
+        if not await update_dimmers():
             continue
-        if not update_heat():
+        if not await update_heat():
             continue
             
         # Update lights
