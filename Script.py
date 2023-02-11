@@ -53,7 +53,7 @@ async def update_dimmers():
             return False
         except kasa.exceptions.SmartDeviceException as err:
             if strip.children[i].is_on:
-                print("Error connecting to Smart Dimmer: " + err)
+                print("Error connecting to Smart Dimmer: " + repr(err))
                 print("Make sure the device is connected to the network, or check the IP.")
             else:
                 print("Error connecting to Smart Dimmer. Attempting to resolve automatically.")
@@ -71,7 +71,7 @@ async def update_heat():
         return False
     except kasa.exceptions.SmartDeviceException as err:
         if strip.children[1].is_on:
-            print("Error connecting to Smart Dimmer: " + err)
+            print("Error connecting to Smart Dimmer: " + repr(err))
             print("Make sure the device is connected to the network, or check the IP.")
         else:
             print("Error connecting to Smart Dimmer. Attempting to resolve automatically.")
@@ -98,7 +98,7 @@ async def main():
             print("Operation cancelled.")    
             continue
         except kasa.exceptions.SmartDeviceException as err:
-            print("Error connecting to Smart Strip: " + err)
+            print("Error connecting to Smart Strip: " + repr(err))
             print("Make sure the device is connected to the network, or check the IP.")
             continue
         
