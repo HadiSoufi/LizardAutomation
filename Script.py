@@ -115,7 +115,7 @@ async def main():
             if now > sunrise and now < sunset:
                 # Sunrise
                 if now < sunrise + fade_time:
-                    await set_brightness(int ((sunset - now) / fade_time))
+                    await set_brightness(int ((now - sunrise) / fade_time))
                 # Sunset
                 elif now > sunset - fade_time:
                     await set_brightness(int ((sunset - now) / fade_time))
