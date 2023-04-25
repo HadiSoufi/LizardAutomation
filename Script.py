@@ -92,7 +92,13 @@ async def main():
         # Get time of day, sunrise, and sunset in local timezone
         sunrise = sun_data.get_sunrise_time().astimezone()
         sunset = sun_data.get_sunset_time().astimezone()
-        now = datetime.now().astimezone()
+        
+        sunrise_fade = (sunrise + fade_time).time()
+        sunset_fade = (sunset - fade_time).time()
+        
+        sunrise = sunrise.time()
+        sunset = sunset.time()
+        now = datetime.now().astimezone().time()
         
         # Validate power strip
         try:
@@ -115,10 +121,10 @@ async def main():
         try:
             if now > sunrise and now < sunset:
                 # Sunrise
-                if now < sunrise + fade_time:
+                if now < sunrise_fade:
                     await set_brightness(int (100 * (now - sunrise) / fade_time))
                 # Sunset
-                elif now > sunset - fade_time:
+                elif now > sunset_fade:
                     await set_brightness(int (100 * (sunset - now) / fade_time))
                 # Day
                 else:
