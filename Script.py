@@ -19,7 +19,7 @@ strip = SmartStrip("192.168.1.160")             # Smart strip
 dimmers = [[SmartDimmer("192.168.1.161"), 1],   # Dimmers to sync to day/night. First number is dimmer ip, second is position on strip.
            [SmartDimmer("192.168.1.188"), 2],
            [SmartDimmer("192.168.1.187"), 3]]
-heat = SmartDimmer("192.168.1.188")             # Heat dimmer is kept separate for temperature control.
+# heat = SmartDimmer("192.168.1.188")             # Heat dimmer is kept separate for temperature control.
 
 fade_time = timedelta(hours = change_hours)     # Convert change_hours to a datetime object
 sun_data = Sun(latitude, longitude)             # Get sunrise/sunset data from provided latitude/longitude
@@ -42,7 +42,7 @@ async def set_brightness(brightness):
 async def turn_off():
     for dimmer in dimmers:
        await dimmer[0].turn_off()
-    await heat.turn_off()
+    # await heat.turn_off()
 
 # Validate dimmers
 async def update_dimmers():
@@ -114,8 +114,8 @@ async def main():
         # Validate dimmers
         if not await update_dimmers():
             continue
-        if not await update_heat():
-            continue
+        #if not await update_heat():
+            #continue
             
         # Update lights
         try:
