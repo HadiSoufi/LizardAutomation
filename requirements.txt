@@ -1,3 +1,4 @@
 python-kasa
-suntime
-timezonefinder
+suntime~=1.2.5
+timezonefinder~=6.2.0
+tzdata
