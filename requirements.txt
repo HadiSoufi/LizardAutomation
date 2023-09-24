@@ -1,4 +1,3 @@
-pytz
 python-kasa
 suntime
-yoctopuce
+timezonefinder
