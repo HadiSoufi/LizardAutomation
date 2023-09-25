@@ -1,6 +1,14 @@
 # What this is
 A simple script that automatically syncs a Kasa smart strip and some dimmer bulbs to a day/night cycle anywhere in the world. I keep reptiles, so I use this to simulate a more natural environment in their enclosures than what off-the-shelf solutions provide. I designed the script to be ran on a dedicated server such as a Pi Zero W, but you can run it anywhere as long as it's on the same network as your hardware.
 
+# Setup
+* **Requires** Python 3.10
+* **Requires** A Kasa Smart Strip and at least one Kasa Smart Dimmer
+1. Install requirements.txt
+2. [Follow the guide here to get your Kasa device information](https://python-kasa.readthedocs.io/en/latest/)
+3. Modify the config section so that it accurately reflects your setup and needs
+4. Run the script
+
 ## Existing solutions
 There are four solutions that currently exist for managing reptile lights.
 1. ### Manual
