@@ -1,11 +1,11 @@
 # What this is
-A simple script that automatically syncs a Kasa smart strip and some dimmer bulbs to a day/night cycle anywhere in the world. I keep reptiles, so I use this to simulate a more natural environment in their enclosures than what off-the-shelf solutions provide. I designed the script to be ran on a dedicated server such as a Pi Zero W, but you can run it anywhere as long as it's on the same network as your hardware.
+A simple script that automatically syncs some Kasa dimmers to a day/night cycle anywhere in the world. I keep reptiles, so I use this to simulate a more natural environment in their enclosures than what off-the-shelf solutions provide. I designed the script to be ran on a dedicated server such as a Pi Zero W, but you can run it anywhere as long as it's on the same network as your hardware.
 
 # Setup
-**Requires** Python 3.10, a Kasa Smart Strip, and at least one Kasa Smart Dimmer
+**Requires** Python 3.10, at least one Kasa Smart Dimmer
 1. Install requirements.txt
 2. [Follow the guide here to get your Kasa device information](https://python-kasa.readthedocs.io/en/latest/)
-3. Modify the config section so that it accurately reflects your setup and needs
+3. Modify the config file so that it accurately reflects your setup and needs
 4. Run the script
 
 # Existing solutions
@@ -27,6 +27,6 @@ There are four solutions that currently exist for managing reptile lights.
 I've used all of these solutions with my reptiles at various points, and I definitely favor smart plugs. However, the bad apps and travel issues kept me from being truly happy with that solution, so I decided to devise my own, which lead me to building this script. It uses Kasa brand smart devices, because, at time of writing, they have a great API and Python library that makes interacting with them super easy. As I continued development, I found a few more advantages to my solution as well.
 * **No app:** No app means no reliance on any infrastructure other than my own. In today's world where any service can be killed at any moment, this provides me with a huge amount of peace of mind.
 * **Robust:** If the power goes out, I can trust that everything will go back to normal as soon as the power goes back on. If someone accidentally turns a plug off, it'll turn itself back on.
-* **Sunrise/Sunset:** None of the off the self solutions support a simulated sunrise and sunset via dimming, but this script does. This is an optional feature as it requires [dedicated hardware](https://www.amazon.com/smart-outdoor-dimmer-plug-kasa/dp/B09DT173R1), but I really like it.
+* **Sunrise/Sunset:** None of the off the self solutions support a simulated sunrise and sunset via dimming, but this script does. This does require [dedicated hardware](https://www.amazon.com/smart-outdoor-dimmer-plug-kasa/dp/B09DT173R1), but I really like it. Note that the script can be easily modified so that it no longer requires dedicated dimming.
 
 The main disadvantage of this script is that it needs to be running 24/7, or close to it, for best results- meaning some kind of dedicated hardware solution is needed. I decided to run it on a Pi Zero W, which has worked very well for me- it should run just fine on anything that has a WiFi connection and can install Python 3.
