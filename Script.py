@@ -2,7 +2,8 @@
 
 import asyncio
 import kasa
-from kasa import SmartStrip
+import smtplib
+import configparser
 from kasa import SmartDimmer
 from datetime import datetime
 from datetime import timedelta
@@ -10,21 +11,48 @@ from suntime import Sun
 from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
 
-# CONFIG
-latitude = 35.227085                                    # Timezone latitude
-longitude = -80.843124                                  # Timezone longitude
-change_hours = 2                                        # Number of hours for sunrise/sunset
-ping_delay = 1                                          # Amount of time in seconds to wait between updates
-strip = SmartStrip("192.168.1.160")                     # Smart strip
-dimmers = [[SmartDimmer("192.168.1.161"), 1],           # First number is dimmer ip, second is position on strip
-           [SmartDimmer("192.168.1.188"), 2],
-           [SmartDimmer("192.168.1.187"), 3]]
+config = configparser.ConfigParser()
+config.read("config.ini")
 
-# GLOBAL
+# Load from config.ini
+ping_delay = int(config.get('Core', 'Update time'))
+dimmer_ips = config.get('Core', 'Dimmers').split(', ')
+
+latitude = float(config.get('Timezone', 'Latitude'))
+longitude = float(config.get('Timezone', 'Longitude'))
+change_hours = int(config.get('Timezone', 'Fade time'))
+
+send_texts = config.get('SMS', 'Send texts') == 'True'
+phone_number = config.get('SMS', 'Phone number')
+carrier = config.get('SMS', 'Carrier')
+
+# Initialize dimmers
+dimmers = [SmartDimmer(ip) for ip in dimmer_ips]
+# 192.168.1.161, 192.168.1.188
+
+# Timezone
 fade_time = timedelta(hours=change_hours)               # Convert change_hours to a datetime object
 sun_data = Sun(latitude, longitude)                     # Get sunrise/sunset data from provided latitude/longitude
 tz_name = TimezoneFinder().timezone_at(lng=longitude, lat=latitude)     # Timezone calculated from provided lat/long
 tz = ZoneInfo(tz_name)                                  # Timezone object from tz_name
+
+# SMS
+CARRIERS = {                                            # List of mobile carrier gateway addresses.
+    "att": "mms.att.net",                               # If you don't see yours here, check:
+    "tmobile": "tmomail.net",                           # https://en.wikipedia.org/wiki/SMS_gateway#Email_clients
+    "verizon": "vtext.com",
+    "sprint": "messaging.sprintpcs.com",
+    "boost": "smsmyboostmobile.com",
+    "cricket": "sms.cricketwireless.net",
+    "uscellular": "email.uscc.net"
+}
+
+carrier = ''.join(c for c in carrier if c.isalnum()).lower()
+recipient = phone_number + "@" + CARRIERS[carrier]
+text_email = "lizardautomator@gmail.com"                # Feel free to replace with your own email
+text_password = "pven okhn kbmv wvmh"                   # App password for gmail- https://tinyurl.com/3svawyjn
+server = smtplib.SMTP("smtp.gmail.com", 587)  # Replace this with the correct email client if not using gmail
+last_text_time = None
 
 
 # Main event loop
@@ -53,13 +81,26 @@ async def main():
         await asyncio.sleep(ping_delay)
 
 
+# Texting service. Works by sending an email to your carrier's gateway address, which is then forwarded as a text.
+def send_text(message):
+    if send_texts:
+        global last_text_time
+        if (last_text_time is None
+                or datetime.now() - last_text_time >= timedelta(hours=2)):
+            server.starttls()
+            server.login(text_email, text_password)
+            server.sendmail(text_email, recipient, message)
+            last_text_time = datetime.now()
+    else:
+        print(message)
+
+
 # Turn on all switches
 async def turn_on():
     try:
         for dimmer in dimmers:
-            await dimmer[0].update()
-            await dimmer[0].turn_on()
-            await dimmer[0].set_brightness(100)
+            await dimmer.turn_on()
+            await dimmer.set_brightness(100)
     except asyncio.CancelledError:
         print("Operation cancelled.")
     except kasa.exceptions.SmartDeviceException as err:
@@ -70,9 +111,8 @@ async def turn_on():
 async def set_brightness(brightness):
     try:
         for dimmer in dimmers:
-            await dimmer[0].update()
-            await dimmer[0].turn_on()
-            await dimmer[0].set_brightness(brightness)
+            await dimmer.turn_on()
+            await dimmer.set_brightness(brightness)
     except asyncio.CancelledError:
         print("Operation cancelled.")
     except kasa.exceptions.SmartDeviceException as err:
@@ -83,7 +123,7 @@ async def set_brightness(brightness):
 async def turn_off():
     try:
         for dimmer in dimmers:
-            await dimmer[0].turn_off()
+            await dimmer.turn_off()
     except asyncio.CancelledError:
         print("Operation cancelled.")
     except kasa.exceptions.SmartDeviceException as err:
@@ -92,32 +132,16 @@ async def turn_off():
 
 # Must be called before doing any operations on the dimmers
 async def update_dimmers():
-    # Validate power strip first
-    try:
-        await strip.update()
-    except asyncio.CancelledError:
-        print("Operation cancelled.")
-        return False
-    except kasa.exceptions.SmartDeviceException as err:
-        print("Error connecting to Smart Strip: " + repr(err))
-        print("Make sure the device is connected to the network, or check the IP.")
-        return False
-
     for dimmer in dimmers:
-        i = dimmer[1] - 1
-
         try:
-            await dimmer[0].update()
+            await dimmer.update()
         except asyncio.CancelledError:
             print("Operation cancelled.")
             return False
         except kasa.exceptions.SmartDeviceException as err:
-            if strip.children[i].is_on:
-                print("Error connecting to Smart Dimmer: " + repr(err))
-                print("Make sure the device is connected to the network, or check the IP.")
-            else:
-                print("Error connecting to Smart Dimmer. Attempting to resolve automatically.")
-                await strip.children[i].turn_on()
+            print("Error connecting to Smart Dimmer: " + repr(err))
+            print("Make sure the device is connected to the network, or check the IP.")
+            send_text("Dimmer not responding, but server is running. Dimmer is unplugged, IP is bad, or dimmer is bad.")
             return False
         else:
             return True
