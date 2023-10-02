@@ -4,12 +4,15 @@ import asyncio
 import kasa
 import smtplib
 import configparser
+import logging
 from kasa import SmartDimmer
 from datetime import datetime
 from datetime import timedelta
 from suntime import Sun
 from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
+
+logging.basicConfig(filename='log.log', encoding='utf-8')
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -84,13 +87,16 @@ async def main():
 # Texting service. Works by sending an email to your carrier's gateway address, which is then forwarded as a text.
 def send_text(message):
     if send_texts:
-        global last_text_time
-        if (last_text_time is None
-                or datetime.now() - last_text_time >= timedelta(hours=2)):
-            server.starttls()
-            server.login(text_email, text_password)
-            server.sendmail(text_email, recipient, message)
-            last_text_time = datetime.now()
+        try:
+            global last_text_time
+            if (last_text_time is None
+                    or datetime.now() - last_text_time >= timedelta(hours=2)):
+                server.starttls()
+                server.login(text_email, text_password)
+                server.sendmail(text_email, recipient, message)
+                last_text_time = datetime.now()
+        except Exception as e:
+            logging.error("Unable to send text: " + e)
     else:
         print(message)
 
@@ -132,16 +138,15 @@ async def turn_off():
 
 # Must be called before doing any operations on the dimmers
 async def update_dimmers():
-    for dimmer in dimmers:
+    for dimmer, i in enumerate(dimmers):
         try:
             await dimmer.update()
         except asyncio.CancelledError:
             print("Operation cancelled.")
             return False
         except kasa.exceptions.SmartDeviceException as err:
-            print("Error connecting to Smart Dimmer: " + repr(err))
-            print("Make sure the device is connected to the network, or check the IP.")
-            send_text("Dimmer not responding, but server is running. Dimmer is unplugged, IP is bad, or dimmer is bad.")
+            logging.warning("Lost connection with dimmer " + str(i))
+            send_text("Dimmer not responding, but server is running. Dimmer unplugged, bad IP, or hardware failure.")
             return False
         else:
             return True
