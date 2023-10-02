@@ -72,13 +72,12 @@ async def main():
 
         # Calculate & set bulb brightness
         brightness = bulb_brightness(now, sunrise, sunset)
-        match brightness:
-            case 0:
-                await turn_off()
-            case 100:
-                await turn_on()
-            case _:
-                await set_brightness(brightness)
+        if brightness == 0:
+            await turn_off()
+        elif brightness == 100:
+            await turn_on()
+        else:
+            await set_brightness(brightness)
 
         # Delay between iterations
         await asyncio.sleep(ping_delay)
