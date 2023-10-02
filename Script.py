@@ -166,17 +166,16 @@ def debug():
 
         val = ''
         brightness = bulb_brightness(now, sunrise, sunset)
-        match brightness:
-            case 0:
+        if brightness == 0:
                 val = 'Night'
-            case 100:
+        elif brightness == 100:
                 val = 'Day'
-            case _:
-                if now < (sunrise + fade_time):
-                    val = 'Sunrise: ' + str(brightness)
-                # Sunset
-                elif now > (sunset - fade_time):
-                    val = 'Sunset: ' + str(brightness)
+        else:
+            if now < (sunrise + fade_time):
+                val = 'Sunrise: ' + str(brightness)
+            # Sunset
+            elif now > (sunset - fade_time):
+                val = 'Sunset: ' + str(brightness)
         print(val)
 
 
