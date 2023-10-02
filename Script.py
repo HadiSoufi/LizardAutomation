@@ -137,7 +137,7 @@ async def turn_off():
 
 # Must be called before doing any operations on the dimmers
 async def update_dimmers():
-    for dimmer, i in enumerate(dimmers):
+    for i, dimmer in enumerate(dimmers):
         try:
             await dimmer.update()
         except asyncio.CancelledError:
@@ -167,15 +167,15 @@ def debug():
         val = ''
         brightness = bulb_brightness(now, sunrise, sunset)
         if brightness == 0:
-                val = 'Night'
+            val = 'Night'
         elif brightness == 100:
-                val = 'Day'
+            val = 'Day'
         else:
             if now < (sunrise + fade_time):
-                val = 'Sunrise: ' + str(brightness)
-            # Sunset
+                val = 'Sunrise: '
             elif now > (sunset - fade_time):
-                val = 'Sunset: ' + str(brightness)
+                val = 'Sunset: '
+            val += str(brightness)
         print(val)
 
 
