@@ -62,22 +62,24 @@ last_text_time = None
 async def main():
     while True:
         # Validate dimmers
-        if not await update_dimmers():
+        if not await lights_update():
             continue
 
         # Get time of day, sunrise, and sunset in local timezone
         now = datetime.now(tz)
-        sunrise = sun_data.get_local_sunrise_time(now, tz)
-        sunset = sun_data.get_local_sunset_time(now, tz)
+        sunrise = sun_data.get_local_sunrise_time(now, tz) - fade_time
+        sunset = sun_data.get_local_sunset_time(now, tz) + fade_time
 
-        # Calculate & set bulb brightness
+        # Calculate bulb brightness
         brightness = bulb_brightness(now, sunrise, sunset)
+
+        # Set bulb values appropriately
         if brightness == 0:
-            await turn_off()
+            await lights_off()
         elif brightness == 100:
-            await turn_on()
+            await lights_on()
         else:
-            await set_brightness(brightness)
+            await lights_dim(brightness)
 
         # Delay between iterations
         await asyncio.sleep(ping_delay)
@@ -97,11 +99,11 @@ def send_text(message):
         except Exception as e:
             logging.error("Unable to send text: " + e)
     else:
-        print(message)
+        logging.warning(message)
 
 
 # Turn on all switches
-async def turn_on():
+async def lights_on():
     try:
         for dimmer in dimmers:
             await dimmer.turn_on()
@@ -113,7 +115,7 @@ async def turn_on():
 
 
 # Set brightness on all switches
-async def set_brightness(brightness):
+async def lights_dim(brightness):
     try:
         for dimmer in dimmers:
             await dimmer.turn_on()
@@ -125,7 +127,7 @@ async def set_brightness(brightness):
 
 
 # Turn off all switches
-async def turn_off():
+async def lights_off():
     try:
         for dimmer in dimmers:
             await dimmer.turn_off()
@@ -135,8 +137,8 @@ async def turn_off():
         print(err)
 
 
-# Must be called before doing any operations on the dimmers
-async def update_dimmers():
+# Must be called before doing any other operations
+async def lights_update():
     for i, dimmer in enumerate(dimmers):
         try:
             await dimmer.update()
@@ -151,7 +153,7 @@ async def update_dimmers():
             return True
 
 
-# For testing
+# For testing the efficacy of time of day calculations
 def debug():
     now = datetime.now(tz).replace(hour=0, minute=0, second=0, microsecond=0)
     increment_hours = 1/60
