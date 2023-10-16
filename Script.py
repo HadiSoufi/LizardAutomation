@@ -67,17 +67,17 @@ async def main():
         sunset = sun_data.get_local_sunset_time(now, tz) + fade_time
 
         # Calculate brightness
-        brightness = get_brightness(now, sunrise, sunset)
+        brightness = calc_brightness(now, sunrise, sunset)
 
         # Update brightness
-        await set_lights_brightness(brightness)
+        await set_brightness(brightness)
 
         # Delay until next update
         await asyncio.sleep(update_delay)
 
 
 # Calculate the brightness based on time of day
-def get_brightness(now, sunrise, sunset):
+def calc_brightness(now, sunrise, sunset):
     if sunrise < now < sunset:
         # Sunrise
         if now < (sunrise + fade_time):
@@ -94,7 +94,7 @@ def get_brightness(now, sunrise, sunset):
 
 
 # Set brightness on all switches
-async def set_lights_brightness(brightness):
+async def set_brightness(brightness):
     for i, dimmer in enumerate(dimmers):
         try:
             await dimmer.update()
