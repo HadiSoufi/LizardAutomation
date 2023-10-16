@@ -105,7 +105,7 @@ async def set_lights_brightness(brightness):
                 await dimmer.turn_on()
                 await dimmer.set_brightness(brightness)
         except kasa.exceptions.SmartDeviceException as err:
-            logging.warning("Lost connection with dimmer " + str(i) + ".\n\t" + err)
+            logging.warning("Lost connection with dimmer " + str(i) + ".\n\t" + str(err))
             send_text("Dimmer not responding, but server is running. Dimmer unplugged, bad IP, or hardware failure.")
         else:
             continue
@@ -123,7 +123,7 @@ def send_text(message):
                 server.sendmail(text_email, recipient, message)
                 last_text_time = datetime.now()
         except Exception as e:
-            logging.error("Unable to send text: " + e)
+            logging.error("Unable to send text: " + str(e))
     else:
         logging.warning(message)
 
