@@ -18,12 +18,12 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # Load from config.ini
-update_delay = int(config.get('Core', 'Update time'))
+update_delay = float(config.get('Core', 'Update time'))
 dimmer_ips = config.get('Core', 'Dimmers').split(', ')
 
 latitude = float(config.get('Timezone', 'Latitude'))
 longitude = float(config.get('Timezone', 'Longitude'))
-change_hours = int(config.get('Timezone', 'Fade time'))
+change_hours = float(config.get('Timezone', 'Fade time'))
 
 send_texts = config.get('SMS', 'Send texts') == 'True'
 phone_number = config.get('SMS', 'Phone number')
