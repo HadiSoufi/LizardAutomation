@@ -13,7 +13,7 @@ A simple script that automatically syncs some Kasa dimmers to a day/night cycle 
 4. Modify the config file so that it accurately reflects your setup and needs
 5. Run the script
 
-# Existing solutions
+# The writeup part
 There are four solutions that currently exist for managing reptile lights.
 1. ### Manual
 
@@ -28,7 +28,7 @@ There are four solutions that currently exist for managing reptile lights.
 
    [Smart plugs](https://www.amazon.com/BN-LINK-Monitoring-Function-Compatible-Assistant/dp/B07CVPKD8Z/ref=sxin_14_pa_sp_search_thematic_sspa?content-id=amzn1.sym.1c86ab1a-a73c-4131-85f1-15bd92ae152d%3Aamzn1.sym.1c86ab1a-a73c-4131-85f1-15bd92ae152d&cv_ct_cx=outlet+timer&keywords=outlet+timer&pd_rd_i=B07CVPKD8Z&pd_rd_r=e67b4845-b45c-4157-b841-5e58270cb774&pd_rd_w=UkVWU&pd_rd_wg=v4H3c&pf_rd_p=1c86ab1a-a73c-4131-85f1-15bd92ae152d&pf_rd_r=YZVE1NQHJJXHBENVCX92&qid=1695594132&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sr=1-2-364cf978-ce2a-480a-9bb0-bdb96faa0f61-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9zZWFyY2hfdGhlbWF0aWM&psc=1) are a bit different. Because they're internet-enabled, they're completely immune to drift & resilient to power outages and, because they're fully electric, they're completely silent too. Many can be easily programmed to turn on and off at sunrise/sunset, and they can be dirt cheap. In some ways, these are an ideal solution for your average reptile keeper. The main downside is that there's no standardization- some use an app, some use a hub; some apps are good, some apps suck; and many apps require your phone to be on the same wifi network for scripting to work. They also tend to be shockingly easy to hack, and can function as a backdoor into your home network. Finally, they're harder to setup than mechanical/electric timers, requiring you to install an app, connect the devices to your network, and configure the devices.
 
-## My solution
+### My solution
 I've used all of these solutions with my reptiles at various points, and I definitely favor smart plugs. However, I got tired of their issues, so I decided to devise my own solution. It uses Kasa brand smart devices, because, at time of writing, they have a great API and Python library that makes scripting super easy. As I continued development, I found a few more advantages to my solution as well.
 * **No app:** No app means no reliance on any infrastructure other than my own. In today's world where any service can be killed at any moment, this provides me with tremendous peace of mind.
 * **Robust:** If the power goes out, I can trust that everything will go back to normal as soon as the power goes back on. If someone accidentally turns a plug off, it'll turn itself back on.
