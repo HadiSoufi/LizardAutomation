@@ -13,7 +13,7 @@ A simple script that automatically syncs some Kasa dimmers to a day/night cycle 
 4. Modify the config file so that it accurately reflects your setup and needs
 5. Run the script
 
-# The writeup part
+# The Writeup
 There are four solutions that currently exist for managing reptile lights.
 1. ### Manual
 
