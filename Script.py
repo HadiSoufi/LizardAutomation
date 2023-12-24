@@ -18,12 +18,12 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # Load from config.ini
-update_delay = float(config.get('Core', 'Update time'))
+update_delay = float(config.get('Core', 'Update time (seconds)'))
 dimmer_ips = config.get('Core', 'Dimmers').split(', ')
 
 latitude = float(config.get('Timezone', 'Latitude'))
 longitude = float(config.get('Timezone', 'Longitude'))
-change_hours = float(config.get('Timezone', 'Fade time'))
+change_hours = float(config.get('Timezone', 'Fade time (hours)'))
 
 send_texts = config.get('SMS', 'Send texts') == 'True'
 phone_number = config.get('SMS', 'Phone number')
@@ -31,7 +31,6 @@ carrier = config.get('SMS', 'Carrier')
 
 # Initialize dimmers
 dimmers = [SmartDimmer(ip) for ip in dimmer_ips]
-# 192.168.1.161, 192.168.1.188
 
 # Timezone
 fade_time = timedelta(hours=change_hours)                               # Convert change_hours to a datetime object
@@ -60,23 +59,25 @@ last_text_time = None
 
 # Main loop
 async def main():
+    last_brightness = 0
     while True:
-        # Get time of day, sunrise, and sunset in local timezone
+        # Using time of day, sunrise, and sunset (in local timezone)- find target dimmer brightness
         now = datetime.now(tz)
         sunrise = sun_data.get_local_sunrise_time(now, tz) - fade_time
         sunset = sun_data.get_local_sunset_time(now, tz) + fade_time
-
-        # Calculate brightness
         brightness = calc_brightness(now, sunrise, sunset)
+        print(brightness)
 
-        # Update brightness
-        await set_brightness(brightness)
+        # Update dimmers if brightness changed
+        if brightness != last_brightness:
+            last_brightness = brightness
+            await set_brightness(brightness)
 
         # Delay until next update
         await asyncio.sleep(update_delay)
 
 
-# Calculate the brightness based on time of day
+# Convert current time of day to an int (0-100), using sunrise/sunset and a fade time to blend.
 def calc_brightness(now, sunrise, sunset):
     if sunrise < now < sunset:
         # Sunrise
@@ -97,6 +98,7 @@ def calc_brightness(now, sunrise, sunset):
 async def set_brightness(brightness):
     for i, dimmer in enumerate(dimmers):
         try:
+            # Must be called before any calls to the dimmer
             await dimmer.update()
 
             if brightness == 0:
@@ -104,9 +106,15 @@ async def set_brightness(brightness):
             else:
                 await dimmer.turn_on()
                 await dimmer.set_brightness(brightness)
+
         except kasa.exceptions.SmartDeviceException as err:
+            print(str(err))
             logging.warning("Lost connection with dimmer " + str(i) + ".\n\t" + str(err))
             send_text("Dimmer not responding, but server is running. Dimmer unplugged, bad IP, or hardware failure.")
+        except Exception as err:
+            print(str(err))
+            logging.warning("Unknown error: " + str(i) + ".\n\t" + str(err))
+            send_text("Lighting script is experiencing an unknown error\n\t" + str(err))
         else:
             continue
 
