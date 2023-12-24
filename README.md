@@ -6,7 +6,7 @@ A simple script that automatically syncs some Kasa dimmers to a day/night cycle 
 * The networked part of the dimmers can fail silently. If you notice that your system simply stops working with no error messages in the log, you may want to try replacing your dimmer.
 
 # Setup
-**Requires** Python 3.9 or greater and at least one Kasa Smart Dimmer
+**Requires Python 3.9 or greater and at least one Kasa Smart Dimmer**
 1. Clone this repository into a folder with read/write access
 2. Install requirements.txt
 3. [Follow this guide to get your Kasa device information](https://python-kasa.readthedocs.io/en/latest/)
