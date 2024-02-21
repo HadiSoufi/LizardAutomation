@@ -59,14 +59,13 @@ last_text_time = None
 
 # Main loop
 async def main():
-    last_brightness = 0
+    last_brightness = -1
     while True:
         # Using time of day, sunrise, and sunset (in local timezone)- find target dimmer brightness
         now = datetime.now(tz)
         sunrise = sun_data.get_local_sunrise_time(now, tz) - fade_time
         sunset = sun_data.get_local_sunset_time(now, tz) + fade_time
         brightness = calc_brightness(now, sunrise, sunset)
-        print(brightness)
 
         # Update dimmers if brightness changed
         if brightness != last_brightness:
