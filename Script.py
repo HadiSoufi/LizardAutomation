@@ -18,7 +18,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # Load from config.ini
-update_delay = float(config.get('Core', 'Update time (seconds)'))
+update_delay = 5 #float(config.get('Core', 'Update time (seconds)'))
 dimmer_ips = config.get('Core', 'Dimmers').split(', ')
 
 latitude = float(config.get('Timezone', 'Latitude'))
@@ -65,6 +65,11 @@ async def main():
         now = datetime.now(tz)
         sunrise = sun_data.get_local_sunrise_time(now, tz) - fade_time
         sunset = sun_data.get_local_sunset_time(now, tz) + fade_time
+
+        # Account for suntime bug- sometimes sunset returns yesterday's sunset
+        if sunset < sunrise:
+            sunset += timedelta(1)
+
         brightness = calc_brightness(now, sunrise, sunset)
 
         # Update dimmers if brightness changed
@@ -81,15 +86,19 @@ def calc_brightness(now, sunrise, sunset):
     if sunrise < now < sunset:
         # Sunrise
         if now < (sunrise + fade_time):
+            print('sunrise')
             return int(100 * (now - sunrise) / fade_time)
         # Sunset
         elif now > (sunset - fade_time):
+            print('sunset')
             return int(100 * (sunset - now) / fade_time)
         # Day
         else:
+            print('day')
             return 100
     # Night
     else:
+        print('night')
         return 0
 
 
