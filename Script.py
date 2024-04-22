@@ -18,7 +18,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # Load from config.ini
-update_delay = 5 #float(config.get('Core', 'Update time (seconds)'))
+update_delay = float(config.get('Core', 'Update time (seconds)'))
 dimmer_ips = config.get('Core', 'Dimmers').split(', ')
 
 latitude = float(config.get('Timezone', 'Latitude'))
@@ -86,19 +86,15 @@ def calc_brightness(now, sunrise, sunset):
     if sunrise < now < sunset:
         # Sunrise
         if now < (sunrise + fade_time):
-            print('sunrise')
             return int(100 * (now - sunrise) / fade_time)
         # Sunset
         elif now > (sunset - fade_time):
-            print('sunset')
             return int(100 * (sunset - now) / fade_time)
         # Day
         else:
-            print('day')
             return 100
     # Night
     else:
-        print('night')
         return 0
 
 
