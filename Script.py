@@ -18,7 +18,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 # Load from config.ini
-update_delay = float(config.get('Core', 'Update time (seconds)'))
+update_delay = 10 #float(config.get('Core', 'Update time (seconds)'))
 dimmer_ips = config.get('Core', 'Dimmers').split(', ')
 
 latitude = float(config.get('Timezone', 'Latitude'))
@@ -53,7 +53,8 @@ carrier = ''.join(c for c in carrier if c.isalnum()).lower()            # Saniti
 recipient = phone_number + "@" + CARRIERS[carrier]                      # Create recipient string
 text_email = "lizardautomator@gmail.com"                                # Feel free to replace with your own email
 text_password = "pven okhn kbmv wvmh"                                   # https://tinyurl.com/3svawyjn
-server = smtplib.SMTP("smtp.gmail.com", 587)                  # Only change if not using gmail
+email_host_name = "smtp.gmail.com"                                      # Only change if not using gmail
+
 last_text_time = None
 
 
@@ -127,6 +128,7 @@ async def set_brightness(brightness):
 def send_text(message):
     if send_texts:
         try:
+            server = smtplib.SMTP(email_host_name, 587)
             global last_text_time
             if (last_text_time is None
                     or datetime.now() - last_text_time >= timedelta(hours=2)):
