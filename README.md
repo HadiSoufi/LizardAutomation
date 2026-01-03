@@ -1,3 +1,6 @@
+# Notice
+This repository is now archived- this functionality can be better achieved using [Home Assistant](https://www.home-assistant.io/). While this script may be useful if you're in need of something extremely lightweight, Home Assistant is significantly easier to set up & maintain, and is probably still lightweight enough for most people. 
+
 # What this is
 A simple script that automatically syncs some Kasa dimmers to a day/night cycle at a location of your choosing. I keep reptiles, so I use this to simulate a more natural environment in their enclosures than what off-the-shelf solutions provide. I run it on a Pi Zero W, but it should work basically anywhere as long as it's on the same network as your hardware.
 
